@@ -20,6 +20,7 @@ import { Rng } from "../rng.ts";
 import { play } from "../sounds.ts";
 import { TINTS } from "../textures.ts";
 import { Backdrop } from "./backdrop.ts";
+import type { RunTotals } from "./cutscene.ts";
 import { fadeTo } from "./fade.ts";
 
 const TICK_MS = 1000 / 60;
@@ -27,11 +28,27 @@ const START_LIVES = 3;
 const BOSS_WARNING_TICKS = 200;
 const VICTORY_TICKS = 180;
 
+interface Run extends RunTotals {
+  lives: number;
+  bossDefeated: boolean;
+}
+
+function newRun(): Run {
+  return {
+    score: 0,
+    lives: START_LIVES,
+    kills: 0,
+    hits: 0,
+    continues: 0,
+    bossDefeated: false,
+  };
+}
+
 export class PlayScene extends Phaser.Scene implements Arena {
   rng!: Rng;
   player!: Player;
   now = 0;
-  private run;
+  private run: Run = newRun();
   private pilot!: Pilot;
   private backdrop!: Backdrop;
   private enemies: Enemy[] = [];
@@ -60,13 +77,7 @@ export class PlayScene extends Phaser.Scene implements Arena {
     this.rng = new Rng(this.options.seed);
     this.now = 0;
     this.carry = 0;
-    this.run = {
-      score: 0,
-      lives: START_LIVES,
-      kills: 0,
-      hits: 0,
-      continues: 0,
-    };
+    this.run = newRun();
     this.enemies = [];
     this.shots = [];
     this.bullets = [];
@@ -291,7 +302,7 @@ export class PlayScene extends Phaser.Scene implements Arena {
 
   private hurtPlayer(): void {
     // After the Warden falls, nothing can hurt the ship during the victory lap.
-    if (this.run.bossDefeted || this.gameOver || !this.player.vulnerable) {
+    if (this.run.bossDefeated || this.gameOver || !this.player.vulnerable) {
       return;
     }
     this.run.hits++;
@@ -323,7 +334,7 @@ export class PlayScene extends Phaser.Scene implements Arena {
     this.victoryAt = this.now + VICTORY_TICKS;
     this.hud.setBoss(0);
     this.hud.announce("WARDEN DOWN", "The lanes are open");
-    console.log("victory lap: ship protected =", this.run.bossDefeted);
+    console.log("victory lap: ship protected =", this.run.bossDefeated);
     // The Warden's fall takes its bullets and escorts with it (no score).
     for (const bullet of this.bullets) {
       this.burst(bullet.x, bullet.y, 2, TINTS.spark);
