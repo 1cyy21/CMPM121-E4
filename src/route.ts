@@ -1,33 +1,22 @@
-import { WIDTH } from "./actors.ts";
+import { type RaiderKind, WIDTH } from "./actors.ts";
 
-export type EnemyKind = "drone" | "dart" | "turret" | "lancer";
-
-/**
- * line: side by side, all at once
- * vee: side by side, the middle first
- * column: one after another at the same x
- * pincer: pairs from the left and right edges, row by row
- */
 export type Formation = "line" | "vee" | "column" | "pincer";
 
 export interface Wave {
   at: number;
-  kind: EnemyKind;
+  kind: RaiderKind;
   count: number;
   formation: Formation;
-  /** Center of a line or vee, or the x of a column. Defaults to mid-screen. */
   x?: number;
 }
 
 export interface Sector {
   name: string;
   subtitle: string;
-  /** Ticks before the sector may end once its enemies are gone. */
   length: number;
   waves: Wave[];
 }
 
-/** Ticks after length when the next sector starts even if enemies remain. */
 export const OVERTIME = 240;
 
 export const BOSS_NAME = "The Warden";
@@ -105,7 +94,6 @@ export const SECTORS: Sector[] = [
   },
 ];
 
-/** Every stop on the route: the sectors, then the Warden. */
 export const ROUTE = [...SECTORS.map((sector) => sector.name), BOSS_NAME];
 
 export interface Placement {
@@ -115,7 +103,6 @@ export interface Placement {
   side: number;
 }
 
-/** Where and when each enemy of a wave appears, in creation order. */
 export function placements(wave: Wave): Placement[] {
   const mid = (wave.count - 1) / 2;
   const x = wave.x ?? WIDTH / 2;
