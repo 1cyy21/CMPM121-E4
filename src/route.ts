@@ -32,19 +32,6 @@ export const OVERTIME = 240;
 
 export const BOSS_NAME = "The Warden";
 
-export const ENEMIES: Record<EnemyKind, {
-  hp: number;
-  score: number;
-  radius: number;
-  dropChance: number;
-  canShoot: boolean;
-}> = {
-  drone: { hp: 2, score: 100, radius: 13, dropChance: 0.015, canShoot: true },
-  dart: { hp: 1, score: 150, radius: 12, dropChance: 0.015, canShoot: false },
-  turret: { hp: 12, score: 400, radius: 19, dropChance: 0.3, canShoot: true },
-  lancer: { hp: 4, score: 250, radius: 15, dropChance: 0.06, canShoot: true },
-};
-
 export const SECTORS: Sector[] = [
   {
     name: "Outer Drift",

@@ -7,10 +7,14 @@ import {
   Player,
   WIDTH,
 } from "./actors.ts";
-import { ShmupBoss, ShmupPowerUp, ShmupPrefabSprite } from "./prefab.ts";
+import {
+  PREFABS,
+  ShmupBoss,
+  ShmupPowerUp,
+  ShmupPrefabSprite,
+} from "./prefab.ts";
 import type { Hud } from "./hud.ts";
 import {
-  ENEMIES,
   type EnemyKind,
   OVERTIME,
   placements,
@@ -325,23 +329,7 @@ export class GameScene extends Phaser.Scene implements Arena {
   }
 
   private spawn(kind: EnemyKind, x: number, y: number, side: number): void {
-    const stats = ENEMIES[kind];
-    this.enemies.push(
-      new ShmupPrefabSprite(
-        this,
-        x,
-        y,
-        kind,
-        stats.hp,
-        stats.score,
-        stats.radius,
-        stats.dropChance,
-        stats.canShoot,
-        false,
-        x,
-        side,
-      ),
-    );
+    this.enemies.push(new ShmupPrefabSprite(this, x, y, PREFABS[kind], side));
   }
 
   // one tick of gameplay
